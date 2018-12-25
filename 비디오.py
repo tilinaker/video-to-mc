@@ -72,7 +72,6 @@ def draw_frame(frame, X, Y, Z, img1):
             mc.setBlock(X - i, Y - j, Z, img1[i][j][0], img1[i][j][0])
 
 def threadfunc(tup):
-    print(tup)
     stframe, count = tup
     for i in range(stframe, stframe + count):
         img[i] = make_imgmc(vid[i])
