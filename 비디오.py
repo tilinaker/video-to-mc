@@ -77,8 +77,7 @@ def threadfunc(tup):
     for i in range(stframe, stframe + count):
         img[i] = make_imgmc(vid[i])
 
-def main(
-    X, Y, Z, threads):
+def main(X, Y, Z, threads):
     global img
     print('process reading.')
     thr1, thr2 = divmod(frame, threads)
