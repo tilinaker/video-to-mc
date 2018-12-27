@@ -12,7 +12,7 @@ mc = minecraft.Minecraft.create()
 
 def load_table():
     file = pickle.load(open("table.txt","rb"))
-    print(file)
+    #print(file)
     return file
 
 def findtable(rgb):
@@ -75,7 +75,6 @@ def threadfunc(tup):
     stframe, count = tup
     for i in range(stframe, stframe + count):
         img[i] = make_imgmc(vid[i])
-
 def main(X, Y, Z, threads):
     global img
     print('process reading.')
