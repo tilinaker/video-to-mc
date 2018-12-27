@@ -12,16 +12,11 @@ def load_mix(filename):
     result = np.zeros(3)
     for i in range(16):
         for j in range(16):
-            result = result + img[i][j]
+            result = result + hsv(img[i][j])
 
-    if result[0] > 255:
-        result[0] = 255
-    if result[1] > 255:
-        result[1] = 255
-    if result[2] > 255:
-        result[2] = 255
+    
 
-    return (result[2], result[1], result[0])
+    return (rgb(result[2], result[1], result[0]))
 
 def main():
     result = []
@@ -35,9 +30,9 @@ def main():
 
             if type(tmp) != type(int(1)):
                 print(' exists there')
-                result.append([str(i) + str(hex(j))[-1].upper() + '.png', tmp])
+                result.append([(i, j), tmp])
                 result1.append(tmp)
-                result2.append(str(i) + str(hex(j))[-1].upper() + '.png')
+                result2.append((i, j))
             else:
                 print(" can't find")
 
@@ -48,6 +43,47 @@ def main():
     file.close()
     print(len(result))
     print(result)
+
+def hsv(B, G, R):
+    r, g, b = R/255, G/255, B/255
+    mx = max(r, g, b)
+    mn = min(r, g, b)
+    df = mx-mn
+    if mx == mn:
+        h = 0
+    elif mx == r:
+        h = (60 * ((g-b)/df) + 360) % 360
+    elif mx == g:
+        h = (60 * ((b-r)/df) + 120) % 360
+    elif mx == b:
+        h = (60 * ((r-g)/df) + 240) % 360
+    if mx == 0:
+        s = 0
+    else:
+        s = df/mx
+    v = mx
+    return h, s, v
+
+def hsv2rgb(h, s, v):
+    h = float(h)
+    s = float(s)
+    v = float(v)
+    h60 = h / 60.0
+    h60f = math.floor(h60)
+    hi = int(h60f) % 6
+    f = h60 - h60f
+    p = v * (1 - s)
+    q = v * (1 - f * s)
+    t = v * (1 - (1 - f) * s)
+    r, g, b = 0, 0, 0
+    if hi == 0: r, g, b = v, t, p
+    elif hi == 1: r, g, b = q, v, p
+    elif hi == 2: r, g, b = p, v, t
+    elif hi == 3: r, g, b = p, q, v
+    elif hi == 4: r, g, b = t, p, v
+    elif hi == 5: r, g, b = v, p, q
+    r, g, b = int(r * 255), int(g * 255), int(b * 255)
+    return r, g, b
 
 main()
 
