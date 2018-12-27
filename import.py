@@ -1,5 +1,6 @@
 import cv2
 import pickle
+import math
 import numpy as np
 
 
@@ -12,7 +13,7 @@ def load_mix(filename):
     result = np.zeros(3)
     for i in range(16):
         for j in range(16):
-            result = result + hsv(img[i][j])
+            result = result + hsv(img[i][j][0], img[i][j][1], img[i][j][2])
 
     
 
@@ -64,7 +65,7 @@ def hsv(B, G, R):
     v = mx
     return h, s, v
 
-def hsv2rgb(h, s, v):
+def rgb(h, s, v):
     h = float(h)
     s = float(s)
     v = float(v)
