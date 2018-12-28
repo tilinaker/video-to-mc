@@ -10,50 +10,37 @@ from math import *
 
 mc = minecraft.Minecraft.create()
 
-class image_mc:
-    def __init__(img_arrary):
-        file = pickle.load(open("table.txt","rb"))
-        
-        self.table, self.block_color, self.block_file = file
-        self.img = img_arrary
-        self.imgHeight = len(img_arrary)
-        self.imgWidth = len(img_array[0])
+def load_table():
+    file = pickle.load(open("table.txt","rb"))
+    #print(file)
+    return file
 
-    def find_in_table(color):
-        '''find most same block to color'''
-        data_avr = []
+def findtable(rgb):
+    tmp1 = []
     
-        for i in range(len(table)):
-            data_avr.append(abs(self.block_color[i][0] - color[0]) + abs(self.block_color[i][1] - rgb[1]) + abs(self.block_color[i][2] - rgb[2]))
+    for i in range(len(table)):
+        tmp1.append(abs(table[i][0] - rgb[0]) + abs(table[i][1] - rgb[1]) + abs(table[i][2] - rgb[2]))
 
-        return data_avr.index(min(data_avr))
+    return tmp1.index(min(tmp1))
 
-    def make_img_block():
-        '''img array -> block code array.'''
-        result = []
+def make_imgmc(array):
+    result = []
+    for i in range(width):
+        result.append([])
+        for j in range(height):
+            result[i].append(table2[findtable(table1, array[i][j])])
+            
+
+    return result
+
+def proc_int(integer):
+    if type(integer[-5]) in ['A', 'B', 'C', 'D', 'E', 'F']:
+        return (int(integer[0:-6]), int('0x' + integer[-5]))
+    elif len(integer) == 6:
+        return (int(integer[-6]), int(integer[-5]))
+    else:
+        return (int(integer[0:-6]), int(integer[-5]))
         
-        for index_Y in range(self.Height):
-            result.append(make_one_raw(self.img[index_Y]))
-
-        return result
-
-    def make_raw(raw):
-        '''one raw of img array -> one raw of block code array.'''
-        result = []
-        
-        for index in range(self.Width):
-            result.append(self.block_file[find_in_table(raw[index])])
-
-        return result
-
-class render:
-    def __init__():
-        pass
-
-    def renderframe(frameindex):
-        pass
-
-
 def import_vid(filename):
     cap = cv2.VideoCapture(filename)
     frameCount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -90,17 +77,18 @@ def threadfunc(tup):
         img[i] = make_imgmc(vid[i])
 def main(X, Y, Z, threads):
     global img
+    print('process reading.')
     thr1, thr2 = divmod(frame, threads)
     temp = []
     img = list(range(frame))
 
-    print('making process.')
+    print('processing.')
     pool = mul.Pool(processes = threads)
     pool.map(threadfunc, [(thr1 * i, thr1) for i in range(threads - 1)] + [(thr1 * threads - 1, thr2)])
     pool.close()
 
     print('processes ready.')
-    print('process start. wait a min.')
+    print('start. wait a min.')
 
     pool.join()
 
@@ -114,19 +102,11 @@ def main(X, Y, Z, threads):
         draw_frame(vid, i, width, height, table1, table2, X, Y, Z, img[i])
     print('done!')
 
-ans = input('do you want to use normal setting(y, n)')
-if ans == 'n':
-    X = int(input('X:'))
-    Y = int(input('Y:'))
-    Z = int(input('Z:'))
-    processes = int(input('process count:'))
-    filename = input('video file name:')
-elif ans == 'y':
-    X = 0
-    Y = 0
-    Z = 0
-    processes = 5
-    filename = 'Untitled.avi'
+X = int(input('X:'))
+Y = int(input('Y:'))
+Z = int(input('Z:'))
+processes = int(input('process count:'))
+filename = input('video file name:')
 
 frame, width, height, vid = import_vid(filename)
 print('frame count', end='')
