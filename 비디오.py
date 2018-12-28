@@ -11,61 +11,62 @@ from math import *
 mc = minecraft.Minecraft.create()
 
 class image_mc:
-    def __init__(img_arrary):
+    def __init__(self, img_arrary):
         file = pickle.load(open("table.txt","rb"))
         
         self.table, self.block_color, self.block_file = file
         self.img = img_arrary
-        self.imgHeight = len(img_arrary)
-        self.imgWidth = len(img_array[0])
+        self.imgHeight = len(self.img)
+        self.imgWidth = len(self.img[0])
 
-    def find_in_table(color):
+    def find_in_table(self, color):
         '''find most same block to color'''
         data_avr = []
     
-        for i in range(len(table)):
-            data_avr.append(abs(self.block_color[i][0] - color[0]) + abs(self.block_color[i][1] - rgb[1]) + abs(self.block_color[i][2] - rgb[2]))
+        for i in range(len(self.table)):
+            data_avr.append(abs(self.block_color[i][0] - color[0]) + abs(self.block_color[i][1] - color[1]) + abs(self.block_color[i][2] - color[2]))
 
         return data_avr.index(min(data_avr))
 
-    def make_img_block():
+    def make_img_block(self):
         '''img array -> block code array.'''
         result = []
-        
-        pool = mul.Pool
-        
-        result.append(self.make_one_raw(self.img[index_Y]))
+
+        for indexY in range(self.imgHeight):
+            result.append(self.make_raw(self.img[indexY]))
 
         return result
 
-    def make_raw(raw):
+    def make_raw(self, raw):
         '''one raw of img array -> one raw of block code array.'''
         result = []
         
-        for index in range(self.Width):
-            result.append(self.block_file[find_in_table(raw[index])])
+        for indexX in range(self.imgWidth):
+            result.append(self.block_file[self.find_in_table(raw[indexX])])
 
         return result
 
-    def render(X, Y, Z, processCount):
+    def render(self, X, Y, Z, processCount):
         '''block code array -> mc blocks.'''
-        blockdata = self.making_img_block()
-        proc_Num, self_proc_Num = divmod(self.Height, processCount)
+        blockdata = self.make_img_block()
+        proc_Num, self_proc_Num = divmod(self.imgHeight, processCount)
 
         #make process
         pool = mul.Pool(processes = processCount - 1)
-        pool.map(render_raw,[(blockdata[index], X, Y + index, Z) for index in range(processCount - 1)])
+        pool.map(self.render_raw, [(blockdata[index], X, Y + index, Z) for index in range(processCount - 1)])
         pool.close()
         
-        for index in range(self_proc_Num):
-            self.render_raw(blockdata[index], X, Y + index, Z)
+        for indexY in range(self_proc_Num):
+            self.render_raw((blockdata[indexY], X, Y + indexY, Z))
 
         pool.join()
 
-    def render_raw(raw, X, Y, Z):
+    def render_raw(self, tup):
         '''one raw of block code array -> one raw of mc blocks.'''
-        for index in range(self.Width):
-            mc.setBlock(X + index, Y, Z, raw[index][0], raw[index][1])
+        raw, X, Y, Z = tup
+        
+        for indexX in range(self.imgWidth):
+            mc.setBlock(X + indexX, Y, Z, raw[indexX][0], raw[indexX][1])
 
 
 def import_vid(filename):
