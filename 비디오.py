@@ -32,8 +32,9 @@ class image_mc:
         '''img array -> block code array.'''
         result = []
         
-        for index_Y in range(self.Height):
-            result.append(make_one_raw(self.img[index_Y]))
+        pool = mul.Pool
+        
+        result.append(self.make_one_raw(self.img[index_Y]))
 
         return result
 
@@ -46,12 +47,25 @@ class image_mc:
 
         return result
 
-class render:
-    def __init__():
-        pass
+    def render(X, Y, Z, processCount):
+        '''block code array -> mc blocks.'''
+        blockdata = self.making_img_block()
+        proc_Num, self_proc_Num = divmod(self.Height, processCount)
 
-    def renderframe(frameindex):
-        pass
+        #make process
+        pool = mul.Pool(processes = processCount - 1)
+        pool.map(render_raw,[(blockdata[index], X, Y + index, Z) for index in range(processCount - 1)])
+        pool.close()
+        
+        for index in range(self_proc_Num):
+            self.render_raw(blockdata[index], X, Y + index, Z)
+
+        pool.join()
+
+    def render_raw(raw, X, Y, Z):
+        '''one raw of block code array -> one raw of mc blocks.'''
+        for index in range(self.Width):
+            mc.setBlock(X + index, Y, Z, raw[index][0], raw[index][1])
 
 
 def import_vid(filename):
@@ -71,71 +85,22 @@ def import_vid(filename):
         while (fc < frameCount  and ret):
             #print('importing frame number ' + str(fc))
             ret, buf[fc] = cap.read()
+            buf[fc] = cv2.cvtColor(buf[fc], cv2.COLOR_BGR2HSV)
             fc += 1
 
         #print('done!')
         return (frameCount, frameWidth, frameHeight, buf)
     else:
         print('''it is too long. the video's frame count should not over 536870912 (4294967295 / 2 / 4)''')
+
+def import_img(filename):
+    return cv2.cvtColor(cv2.imread(filename, cv2.IMREAD_COLOR ), cv2.COLOR_BGR2HSV)
             
-
-def draw_frame(frame, X, Y, Z, img1):
-    for i in range(width):
-        for j in range(height):
-            mc.setBlock(X - i, Y - j, Z, img1[i][j][0], img1[i][j][0])
-
-def threadfunc(tup):
-    stframe, count = tup
-    for i in range(stframe, stframe + count):
-        img[i] = make_imgmc(vid[i])
 def main(X, Y, Z, threads):
-    global img
-    thr1, thr2 = divmod(frame, threads)
-    temp = []
-    img = list(range(frame))
+    img = import_img('2527.png')
 
-    print('making process.')
-    pool = mul.Pool(processes = threads)
-    pool.map(threadfunc, [(thr1 * i, thr1) for i in range(threads - 1)] + [(thr1 * threads - 1, thr2)])
-    pool.close()
+    mcimg = image_mc(img)
+    mcimg.render(X, Y, Z, threads)
 
-    print('processes ready.')
-    print('process start. wait a min.')
-
-    pool.join()
-
-    print(len(img))
-
-    input('done! press enter!')
-
-    print('drawing video')
-    for i in range(frame):
-        print('drawing frame num ' + str(i))
-        draw_frame(vid, i, width, height, table1, table2, X, Y, Z, img[i])
-    print('done!')
-
-ans = input('do you want to use normal setting(y, n)')
-if ans == 'n':
-    X = int(input('X:'))
-    Y = int(input('Y:'))
-    Z = int(input('Z:'))
-    processes = int(input('process count:'))
-    filename = input('video file name:')
-elif ans == 'y':
-    X = 0
-    Y = 0
-    Z = 0
-    processes = 5
-    filename = 'Untitled.avi'
-
-frame, width, height, vid = import_vid(filename)
-print('frame count', end='')
-print(frame)
-print('width', end='')
-print(width)
-print('height', end='')
-print(height)
-#input()
-table, table1, table2 = load_table()
-
-main(X, Y, Z, processes)
+if __name__ == '__main__':
+    main(0, 0, 0, 10)
