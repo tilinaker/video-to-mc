@@ -35,7 +35,7 @@ class image_mc:
         for indexY in range(self.imgHeight):
             result.append(self.make_raw(self.img[indexY]))
 
-        return result
+        self.blockdata = result
 
     def make_raw(self, raw):
         '''one raw of img array -> one raw of block code array.'''
@@ -48,25 +48,32 @@ class image_mc:
 
     def render(self, X, Y, Z, processCount):
         '''block code array -> mc blocks.'''
+        self.X, self.Y, self.Z = X, Y, Z
+        
         blockdata = self.make_img_block()
-        proc_Num, self_proc_Num = divmod(self.imgHeight, processCount)
+        self.proc_Num, self.self_proc_Num = divmod(self.imgHeight, processCount)
+        print(divmod(self.imgHeight, processCount))
 
         #make process
-        pool = mul.Pool(processes = processCount - 1)
-        pool.map(self.render_raw, [(blockdata[index], X, Y + index, Z) for index in range(processCount - 1)])
+        #mapdata = [(blockdata[index], X, Y + index, Z) for index in range(processCount - 1)] + [(blockdata[processCount], X, Y + processCount, Z)]
+        pool = mul.Pool(processCount)
+        pool.map(self.render_proc, list(range(processCount - 1)) + [-1 * (processCount - 1)])
         pool.close()
-        
-        for indexY in range(self_proc_Num):
-            self.render_raw((blockdata[indexY], X, Y + indexY, Z))
 
         pool.join()
 
-    def render_raw(self, tup):
+    def render_proc(self, forindex):
         '''one raw of block code array -> one raw of mc blocks.'''
-        raw, X, Y, Z = tup
+        print('er')
         
-        for indexX in range(self.imgWidth):
-            mc.setBlock(X + indexX, Y, Z, raw[indexX][0], raw[indexX][1])
+        if forindex >= 0:
+            for index in range(self.proc_Num):
+                for indexX in range(self.imgWidth):
+                    mc.setBlock(self.X + indexX, self.Y + forindex, self.Z, self.blockdata[forindex][indexX][0], self.blockdata[forindex][indexX][1])
+        else:
+            for index in range(self.self_proc_Num):
+                for indexX in range(self.imgWidth):
+                    mc.setBlock(self.X + indexX, self.Y + abs(forindex), self.Z, self.blockdata[abs(forindex)][indexX][0], self.blockdata[abs(forindex)][indexX][1])
 
 
 def import_vid(filename):
@@ -104,4 +111,4 @@ def main(X, Y, Z, threads):
     mcimg.render(X, Y, Z, threads)
 
 if __name__ == '__main__':
-    main(0, 0, 0, 10)
+    main(200, 22, -972, 10)
