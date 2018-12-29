@@ -64,16 +64,17 @@ class imageMc:
 
     def render_proc(self, forindex):
         #one raw of block code array -> one raw of mc blocks.
-        print('er')
         
         if forindex >= 0:
             for index in range(self.proc_Num):
                 for indexX in range(self.imgWidth):
                     mc.setBlock(self.X + indexX, self.Y + forindex, self.Z, self.blockdata[forindex][indexX][0], self.blockdata[forindex][indexX][1])
+                    print(self.X + indexX, self.Y + forindex, self.Z, self.blockdata[forindex][indexX][0],self.blockdata[forindex][indexX][1])
         else:
             for index in range(self.self_proc_Num):
                 for indexX in range(self.imgWidth):
                     mc.setBlock(self.X + indexX, self.Y + abs(forindex), self.Z, self.blockdata[abs(forindex)][indexX][0], self.blockdata[abs(forindex)][indexX][1])
+                    print(self.X + indexX, self.Y + abs(forindex), self.Z,self.blockdata[abs(forindex)][indexX][0], self.blockdata[abs(forindex)][indexX][1])
 
 
 def import_vid(filename):
@@ -111,4 +112,4 @@ def main(X, Y, Z, threads):
     mcimg.render(X, Y, Z, threads)
 
 if __name__ == '__main__':
-    main(200, 22, -972, 10)
+    main(214, 27, -983, 10)
