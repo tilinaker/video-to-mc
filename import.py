@@ -15,11 +15,14 @@ def load_mix(filename):
     result = np.zeros(3)
     for i in range(16):
         for j in range(16):
-            result = result + img[i][j]
+            result[0], result[1], result[2] = colorMix(result[0], result[0], result[0], img[i][j][0], img[i][j][1], img[i][j][2])
 
     
 
     return (result[0], result[1], result[2])
+
+def colorMix(H1, S1, V1, H2, S2, V2):
+    return (H1 + H2 / 2, S1 + S2 / 2, V1 + V2 / 2)
 
 def main():
     result = []
