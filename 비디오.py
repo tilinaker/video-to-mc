@@ -10,7 +10,7 @@ from math import *
 
 mc = minecraft.Minecraft.create()
 
-class image_mc:
+class imageMc:
     def __init__(self, img_arrary):
         file = pickle.load(open("table.txt","rb"))
         
@@ -20,7 +20,7 @@ class image_mc:
         self.imgWidth = len(self.img[0])
 
     def find_in_table(self, color):
-        '''find most same block to color'''
+        #find most same block to color
         data_avr = []
     
         for i in range(len(self.table)):
@@ -29,7 +29,7 @@ class image_mc:
         return data_avr.index(min(data_avr))
 
     def make_img_block(self):
-        '''img array -> block code array.'''
+        #img array -> block code array.
         result = []
 
         for indexY in range(self.imgHeight):
@@ -38,7 +38,7 @@ class image_mc:
         self.blockdata = result
 
     def make_raw(self, raw):
-        '''one raw of img array -> one raw of block code array.'''
+        #one raw of img array -> one raw of block code array.
         result = []
         
         for indexX in range(self.imgWidth):
@@ -47,7 +47,7 @@ class image_mc:
         return result
 
     def render(self, X, Y, Z, processCount):
-        '''block code array -> mc blocks.'''
+        #block code array -> mc blocks.
         self.X, self.Y, self.Z = X, Y, Z
         
         blockdata = self.make_img_block()
@@ -63,7 +63,7 @@ class image_mc:
         pool.join()
 
     def render_proc(self, forindex):
-        '''one raw of block code array -> one raw of mc blocks.'''
+        #one raw of block code array -> one raw of mc blocks.
         print('er')
         
         if forindex >= 0:
@@ -107,7 +107,7 @@ def import_img(filename):
 def main(X, Y, Z, threads):
     img = import_img('2527.png')
 
-    mcimg = image_mc(img)
+    mcimg = imageMc(img)
     mcimg.render(X, Y, Z, threads)
 
 if __name__ == '__main__':
