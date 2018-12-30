@@ -1,12 +1,14 @@
 import cv2
-import multiprocessing as mul
-import pdb
-import time
-import pickle
-import numpy as np
-import mcpi.minecraft as minecraft
-import mcpi.block as block
 from math import *
+import mcpi.block as block
+import multiprocessing as mul
+import mcpi.minecraft as minecraft
+import numpy as np
+import os
+import pdb
+import pickle
+import time
+
 
 mc = minecraft.Minecraft.create()
 
@@ -18,6 +20,7 @@ class imageMc:
         self.img = img_arrary
         self.imgHeight = len(self.img)
         self.imgWidth = len(self.img[0])
+        self.counter = 0
 
     def find_in_table(self, color):
         #find most same block to color
@@ -62,18 +65,22 @@ class imageMc:
 
         pool.join()
 
+        print('counter ', end = '')
+        print(self.counter)
+
     def render_proc(self, forindex):
         #one raw of block code array -> one raw of mc blocks.
-        
+        self.counter = self.counter + 1
+
         if forindex >= 0:
             for index in range(self.proc_Num):
                 for indexX in range(self.imgWidth):
-                    mc.setBlock(self.X + indexX, self.Y + forindex, self.Z, self.blockdata[forindex][indexX][0], self.blockdata[forindex][indexX][1])
+                    mc.setBlock(self.X + indexX, self.Y + forindex + index, self.Z, self.blockdata[forindex + index][indexX][0], self.blockdata[forindex + index][indexX][1])
                     print(self.X + indexX, self.Y + forindex, self.Z, self.blockdata[forindex][indexX][0],self.blockdata[forindex][indexX][1])
         else:
             for index in range(self.self_proc_Num):
                 for indexX in range(self.imgWidth):
-                    mc.setBlock(self.X + indexX, self.Y + abs(forindex), self.Z, self.blockdata[abs(forindex)][indexX][0], self.blockdata[abs(forindex)][indexX][1])
+                    mc.setBlock(self.X + indexX, self.Y + abs(forindex) + index, self.Z, self.blockdata[abs(forindex) + index][indexX][0], self.blockdata[abs(forindex) + index][indexX][1])
                     print(self.X + indexX, self.Y + abs(forindex), self.Z,self.blockdata[abs(forindex)][indexX][0], self.blockdata[abs(forindex)][indexX][1])
 
 
@@ -106,10 +113,11 @@ def import_img(filename):
     return cv2.cvtColor(cv2.imread(filename, cv2.IMREAD_COLOR ), cv2.COLOR_BGR2HSV)
             
 def main(X, Y, Z, threads):
+    os.system('py import.py')
     img = import_img('2527.png')
 
     mcimg = imageMc(img)
     mcimg.render(X, Y, Z, threads)
 
 if __name__ == '__main__':
-    main(214, 27, -983, 10)
+    main(249, 96, -1040, 10)
