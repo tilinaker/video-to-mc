@@ -75,13 +75,13 @@ class imageMc:
         if forindex >= 0:
             for index in range(self.proc_Num):
                 for indexX in range(self.imgWidth):
-                    mc.setBlock(self.X + indexX, self.Y + forindex + index, self.Z, self.blockdata[forindex + index][indexX][0], self.blockdata[forindex + index][indexX][1])
-                    print(self.X + indexX, self.Y + forindex, self.Z, self.blockdata[forindex][indexX][0],self.blockdata[forindex][indexX][1])
+                    mc.setBlock(self.X - indexX, self.Y - forindex - index, self.Z, self.blockdata[forindex + index][indexX][0], self.blockdata[forindex + index][indexX][1])
+                    print(self.X - indexX, self.Y - forindex - index, self.Z, self.blockdata[forindex][indexX][0],self.blockdata[forindex][indexX][1])
         else:
             for index in range(self.self_proc_Num):
                 for indexX in range(self.imgWidth):
-                    mc.setBlock(self.X + indexX, self.Y + abs(forindex) + index, self.Z, self.blockdata[abs(forindex) + index][indexX][0], self.blockdata[abs(forindex) + index][indexX][1])
-                    print(self.X + indexX, self.Y + abs(forindex), self.Z,self.blockdata[abs(forindex)][indexX][0], self.blockdata[abs(forindex)][indexX][1])
+                    mc.setBlock(self.X - indexX, self.Y - abs(forindex) - index, self.Z, self.blockdata[abs(forindex) + index][indexX][0], self.blockdata[abs(forindex) + index][indexX][1])
+                    print(self.X - indexX, self.Y - abs(forindex) - index, self.Z,self.blockdata[abs(forindex)][indexX][0], self.blockdata[abs(forindex)][indexX][1])
 
 
 def import_vid(filename):
@@ -114,7 +114,7 @@ def import_img(filename):
             
 def main(X, Y, Z, threads):
     os.system('py import.py')
-    img = import_img('2527.png')
+    img = import_img('2380.png')
 
     mcimg = imageMc(img)
     mcimg.render(X, Y, Z, threads)
