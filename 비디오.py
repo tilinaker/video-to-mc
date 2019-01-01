@@ -20,7 +20,6 @@ class imageMc:
         self.img = img_arrary
         self.imgHeight = len(self.img)
         self.imgWidth = len(self.img[0])
-        self.counter = 0
 
     def find_in_table(self, color):
         #find most same block to color
@@ -55,7 +54,6 @@ class imageMc:
         
         blockdata = self.make_img_block()
         self.proc_Num, self.self_proc_Num = divmod(self.imgHeight, processCount)
-        print(divmod(self.imgHeight, processCount))
 
         #make process
         #mapdata = [(blockdata[index], X, Y + index, Z) for index in range(processCount - 1)] + [(blockdata[processCount], X, Y + processCount, Z)]
@@ -65,12 +63,8 @@ class imageMc:
 
         pool.join()
 
-        print('counter ', end = '')
-        print(self.counter)
-
     def render_proc(self, forindex):
         #one raw of block code array -> one raw of mc blocks.
-        self.counter = self.counter + 1
 
         if forindex >= 0:
             for index in range(self.proc_Num):
@@ -105,19 +99,21 @@ def import_vid(filename):
             fc += 1
 
         #print('done!')
-        return (frameCount, frameWidth, frameHeight, buf)
+        return buf
     else:
         print('''it is too long. the video's frame count should not over 536870912 (4294967295 / 2 / 4)''')
 
 def import_img(filename):
     return cv2.cvtColor(cv2.imread(filename, cv2.IMREAD_COLOR ), cv2.COLOR_BGR2HSV)
             
-def main(X, Y, Z, threads):
+def main(X, Y, Z, threads, filename, fps):
     os.system('py import.py')
-    img = import_img('2380.png')
+    vid = import_vid(filename)
 
-    mcimg = imageMc(img)
-    mcimg.render(X, Y, Z, threads)
+    for frame in range(len(vid)):
+        mcimg = imageMc(vid[frame])
+        mcimg.render(X, Y, Z, threads)
+        time.sleep(1 // fps)
 
 if __name__ == '__main__':
-    main(249, 96, -1040, 10)
+    main(249, 96, -1040, 15, 'Untitled.avi', 30)
