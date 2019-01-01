@@ -114,7 +114,7 @@ def import_img(filename):
             
 def main(X, Y, Z, threads):
     os.system('py import.py')
-    img = import_img('2380.png')
+    img = import_img('2360.png')
 
     mcimg = imageMc(img)
     mcimg.render(X, Y, Z, threads)
