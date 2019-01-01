@@ -48,7 +48,7 @@ class imageMc:
         #make process
         #mapdata = [(blockdata[index], X, Y + index, Z) for index in range(processCount - 1)] + [(blockdata[processCount], X, Y + processCount, Z)]
         pool = mul.Pool(processCount)
-        pool.map(self.render_proc, list(range(processCount - 1)) + [-1 * (processCount - 1)])
+        pool.map(self.render_proc, list(range(0, processCount - 1, self.proc_Num)) + [-1 * (processCount - 1 * self.proc_Num)])
         pool.close()
 
         pool.join()
