@@ -23,7 +23,7 @@ def load_mix(filename):
     return (result[0], result[1], result[2])
 
 def colorMix(H1, S1, V1, H2, S2, V2):
-    return (H1 + H2 / 2, S1 + S2 / 2, V1 + V2 / 2)
+    return (max(H1, H2) - min(H1, H2) / 2, S1 + S2 / 2, V1 + V2 / 2)
 
 def main():
     result = []
